@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/controller/homescreen_controller.dart';
 import 'package:news_app/controller/bottom_navigation_controller.dart';
+import 'package:news_app/controller/search_scren_controller.dart';
 import 'package:news_app/utils/color_constant.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +22,10 @@ class BottomNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   provider.changeBottomItem(0);
+                  Provider.of<HomescreenController>(context, listen: false)
+                      .changeCategoryIndex(0);
+                  print(Provider.of<HomescreenController>(context)
+                      .selectedCategory);
                 },
                 child: Container(
                   width: 50,
@@ -36,6 +42,10 @@ class BottomNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   provider.changeBottomItem(1);
+                  Provider.of<SearchScreenController>(context, listen: false)
+                      .changeCategoryIndex(100);
+                  print(Provider.of<HomescreenController>(context)
+                      .selectedCategory);
                 },
                 child: Container(
                   width: 50,
@@ -52,6 +62,7 @@ class BottomNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   provider.changeBottomItem(2);
+                  // Provider.of<DataController>(context).changeCategoryIndex(0);
                 },
                 child: Container(
                   width: 50,
@@ -68,6 +79,7 @@ class BottomNavigation extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   provider.changeBottomItem(3);
+                  // Provider.of<DataController>(context).selectedCategory = 0;
                 },
                 child: Container(
                   width: 50,

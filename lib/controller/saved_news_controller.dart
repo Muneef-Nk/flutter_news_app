@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/model/saved_news_model.dart';
 
-class SavednewController with ChangeNotifier {
-  List savedNews = [];
+class SavedNewsController with ChangeNotifier {
+  List<SavedNewsModel> savedNewsListList = [];
 
-  addNews(int index) {
-    savedNews.add(index);
+  bool isSaved = false;
+
+  // savedOrNot() {
+  //   isSaved = !isSaved;
+  //   notifyListeners();
+  //   print('clickee');
+  // }
+
+  void checkNewsSavedOrNot(SavedNewsModel dataModel) {
+    savedNewsListList.add(dataModel);
+
+    isSaved = !isSaved;
+    notifyListeners();
+
+    print(savedNewsListList.length);
     notifyListeners();
   }
 }

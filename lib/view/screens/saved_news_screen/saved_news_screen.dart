@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/controller/api_data_controller.dart';
 import 'package:news_app/controller/saved_news_controller.dart';
 import 'package:news_app/utils/color_constant.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +8,11 @@ class SavedNews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DataController>(context);
-    final savedNewsProvider = Provider.of<SavednewController>(context);
+    final provider = Provider.of<SavedNewsController>(context);
 
     return Scaffold(
       body: ListView.builder(
-          itemCount: savedNewsProvider.savedNews.length,
+          itemCount: provider.savedNewsListList.length,
           itemBuilder: (context, index) {
             return Container(
               margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
@@ -34,7 +32,7 @@ class SavedNews extends StatelessWidget {
                           topLeft: Radius.circular(20),
                           bottomLeft: Radius.circular(20)),
                       child: Image.network(
-                        provider.api?.articles?[index].urlToImage ?? "",
+                        provider.savedNewsListList[index].image,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -53,7 +51,7 @@ class SavedNews extends StatelessWidget {
                         //   height: 5,
                         // ),
                         Text(
-                          provider.api?.articles?[index].title ?? "",
+                          provider.savedNewsListList[index].title,
                           style: TextStyle(
                               fontSize: 15,
                               height: 1.4,
@@ -75,7 +73,7 @@ class SavedNews extends StatelessWidget {
                               width: 5,
                             ),
                             Text(
-                              provider.api?.articles?[index].source?.name ?? "",
+                              provider.savedNewsListList[index].source,
                               style: TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 12),
                             ),
@@ -83,26 +81,26 @@ class SavedNews extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            RichText(
-                              text: TextSpan(
-                                text:
-                                    '${provider.api?.articles?[index].publishedAt?.year}-',
-                                style: TextStyle(
-                                    fontSize: 11, color: Colors.black),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text:
-                                        '${provider.api?.articles?[index].publishedAt?.month}-',
-                                    style: TextStyle(fontSize: 11),
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        '${provider.api?.articles?[index].publishedAt?.day}',
-                                    style: new TextStyle(fontSize: 11),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            // RichText(
+                            //   text: TextSpan(
+                            //     text:
+                            //         '${provider.dataModel?.articles?[index].publishedAt?.year}-',
+                            //     style: TextStyle(
+                            //         fontSize: 11, color: Colors.black),
+                            //     children: <TextSpan>[
+                            //       TextSpan(
+                            //         text:
+                            //             '${provider.dataModel?.articles?[index].publishedAt?.month}-',
+                            //         style: TextStyle(fontSize: 11),
+                            //       ),
+                            //       TextSpan(
+                            //         text:
+                            //             '${provider.dataModel?.articles?[index].publishedAt?.day}',
+                            //         style: new TextStyle(fontSize: 11),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             SizedBox(
                               width: 10,
                             ),
@@ -113,7 +111,7 @@ class SavedNews extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(color: primary)),
                               child: Text(
-                                provider.category ?? "Treding",
+                                provider.savedNewsListList[index].category,
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -161,9 +159,17 @@ class SavedNews extends StatelessWidget {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Provider.of<SavednewController>(context,
-                                        listen: false)
-                                    .addNews(index);
+                                // provider.checkNewsSavedOrNot(
+                                //   SavedNewsModel(
+                                //     articles: provider.d,
+                                //     category: ,
+                                //     description: ,
+                                //     image: ,
+                                //     source: ,
+                                //     title: ,
+
+                                //   )
+                                // );
                               },
                               child: Icon(
                                 Icons.bookmark_outline,

@@ -1,3 +1,13 @@
+// To parse this JSON data, do
+//
+//     final dataModel = dataModelFromJson(jsonString);
+
+import 'dart:convert';
+
+DataModel dataModelFromJson(String str) => DataModel.fromJson(json.decode(str));
+
+String dataModelToJson(DataModel data) => json.encode(data.toJson());
+
 class DataModel {
   String? status;
   int? totalResults;
@@ -74,7 +84,7 @@ class Article {
 }
 
 class Source {
-  String? id;
+  dynamic id;
   String? name;
 
   Source({

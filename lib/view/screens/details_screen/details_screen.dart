@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/controller/api_data_controller.dart';
+import 'package:news_app/controller/homescreen_controller.dart';
 import 'package:news_app/utils/color_constant.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -11,7 +11,7 @@ class DetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DataController>(context);
+    final provider = Provider.of<HomescreenController>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -28,7 +28,7 @@ class DetailScreen extends StatelessWidget {
         actions: [
           GestureDetector(
             onTap: () {
-              Share.share(provider.api?.articles?[index].url ?? "");
+              Share.share(provider.dataModel?.articles?[index].url ?? "");
               print('clicked');
             },
             child: Container(
@@ -77,7 +77,7 @@ class DetailScreen extends StatelessWidget {
                 color: Colors.deepPurpleAccent,
                 image: DecorationImage(
                     image: NetworkImage(
-                      provider.api?.articles?[index].urlToImage ?? "",
+                      provider.dataModel?.articles?[index].urlToImage ?? "",
                     ),
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.circular(20)),
@@ -85,7 +85,7 @@ class DetailScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
             child: Text(
-              provider.api?.articles?[index].title ?? "",
+              provider.dataModel?.articles?[index].title ?? "",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
@@ -172,7 +172,8 @@ class DetailScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          provider.api?.articles?[index].source?.name ?? "",
+                          provider.dataModel?.articles?[index].source?.name ??
+                              "",
                           style: TextStyle(
                             fontSize: 18,
                             color: primary,
@@ -183,7 +184,7 @@ class DetailScreen extends StatelessWidget {
                           height: 8,
                         ),
                         Text(
-                          '${provider.api?.articles?[index].publishedAt?.day} day ago',
+                          '${provider.dataModel?.articles?[index].publishedAt?.day} day ago',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.black,
@@ -225,7 +226,7 @@ class DetailScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              provider.api?.articles?[index].content ?? "",
+              provider.dataModel?.articles?[index].content ?? "",
               style:
                   TextStyle(fontSize: 16, color: Colors.grey[900], height: 1.4),
               textAlign: TextAlign.justify,
@@ -235,7 +236,7 @@ class DetailScreen extends StatelessWidget {
             padding: const EdgeInsets.only(left: 15),
             child: TextButton(
                 onPressed: () async {
-                  final weburl = provider.api?.articles?[index].url ?? "";
+                  final weburl = provider.dataModel?.articles?[index].url ?? "";
                   final url = Uri.parse(weburl);
                   if (await canLaunchUrl(url)) {
                     await launchUrl(

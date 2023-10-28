@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:news_app/controller/api_data_controller.dart';
+import 'package:lottie/lottie.dart';
+import 'package:news_app/controller/homescreen_controller.dart';
 import 'package:news_app/controller/saved_news_controller.dart';
+import 'package:news_app/model/saved_news_model.dart';
 import 'package:news_app/view/screens/details_screen/details_screen.dart';
+import 'package:news_app/view/screens/saved_news_screen/saved_news_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/color_constant.dart';
@@ -15,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
-    Provider.of<DataController>(context, listen: false).fetchNews();
+    Provider.of<HomescreenController>(context, listen: false).fetchNews();
     print('init state');
     super.initState();
   }
@@ -24,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DataController>(context);
+    final provider = Provider.of<HomescreenController>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -77,9 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               suffixIcon: GestureDetector(
                                   onTap: () {
                                     searchController.text.isNotEmpty
-                                        ? Provider.of<DataController>(context,
+                                        ? Provider.of<HomescreenController>(
+                                                context,
                                                 listen: false)
-                                            .fetchNews(
+                                            .fetchCategoryNews(
                                                 searchQuarry:
                                                     searchController.text)
                                         : null;
@@ -136,11 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 190,
                     decoration: BoxDecoration(
                         color: Colors.deepPurpleAccent,
-                        image: DecorationImage(
-                            image: NetworkImage(
-                              provider.api?.articles?[57].urlToImage ?? "",
-                            ),
-                            fit: BoxFit.cover),
+                        image: DecorationImage(image: NetworkImage(
+                            // provider.dataModel?.articles?[6].urlToImage ?? "",
+                            ""), fit: BoxFit.cover),
                         borderRadius: BorderRadius.circular(20)),
                   ),
                   Padding(
@@ -179,13 +181,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: EdgeInsets.only(right: 10),
                             child: GestureDetector(
                               onTap: () {
-                                Provider.of<DataController>(context,
+                                Provider.of<HomescreenController>(context,
                                         listen: false)
                                     .fetchCategoryNews(
                                         searchQuarry:
                                             provider.categories[index]);
+                                Provider.of<HomescreenController>(context,
+                                        listen: false)
+                                    .changeCategoryIndex(index);
 
-                                provider.changeCategoryIndex(index);
+                                searchController.text = "";
                               },
                               child: Container(
                                 height: 30,
@@ -216,17 +221,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 10,
                   ),
                   provider.isDataLoading
-                      ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 50),
-                            child: CircularProgressIndicator(color: primary),
-                          ),
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Lottie.asset("assets/animation/loading.json",
+                              width: 200),
                         )
                       : SizedBox(
                           child: ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: provider.api?.articles?.length ?? 0,
+                              itemCount:
+                                  provider.dataModel?.articles?.length ?? 0,
                               itemBuilder: (context, index) {
                                 return GestureDetector(
                                   onTap: () {
@@ -257,7 +262,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 bottomLeft:
                                                     Radius.circular(20)),
                                             child: Image.network(
-                                              provider.api?.articles?[index]
+                                              provider
+                                                      .dataModel
+                                                      ?.articles?[index]
                                                       .urlToImage ??
                                                   "",
                                               fit: BoxFit.cover,
@@ -280,7 +287,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               //   height: 5,
                                               // ),
                                               Text(
-                                                provider.api?.articles?[index]
+                                                provider
+                                                        .dataModel
+                                                        ?.articles?[index]
                                                         .title ??
                                                     "",
                                                 style: TextStyle(
@@ -306,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   Text(
                                                     provider
-                                                            .api
+                                                            .dataModel
                                                             ?.articles?[index]
                                                             .source
                                                             ?.name ??
@@ -323,20 +332,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   RichText(
                                                     text: TextSpan(
                                                       text:
-                                                          '${provider.api?.articles?[index].publishedAt?.year}-',
+                                                          '${provider.dataModel?.articles?[index].publishedAt?.year}-',
                                                       style: TextStyle(
                                                           fontSize: 11,
                                                           color: Colors.black),
                                                       children: <TextSpan>[
                                                         TextSpan(
                                                           text:
-                                                              '${provider.api?.articles?[index].publishedAt?.month}-',
+                                                              '${provider.dataModel?.articles?[index].publishedAt?.month}-',
                                                           style: TextStyle(
                                                               fontSize: 11),
                                                         ),
                                                         TextSpan(
                                                           text:
-                                                              '${provider.api?.articles?[index].publishedAt?.day}',
+                                                              '${provider.dataModel?.articles?[index].publishedAt?.day}',
                                                           style: new TextStyle(
                                                               fontSize: 11),
                                                         ),
@@ -359,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             color: primary)),
                                                     child: Text(
                                                       provider.category ??
-                                                          "Treding",
+                                                          "Trending",
                                                       style: TextStyle(
                                                           fontSize: 10,
                                                           fontWeight:
@@ -415,16 +424,44 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   GestureDetector(
                                                     onTap: () {
-                                                      Provider.of<SavednewController>(
-                                                              context,
-                                                              listen: false)
-                                                          .addNews(index);
+                                                      Provider.of<SavedNewsController>(context, listen: false).checkNewsSavedOrNot(SavedNewsModel(
+                                                          category: provider.categories[
+                                                              index],
+                                                          description: provider
+                                                                  .dataModel
+                                                                  ?.articles?[
+                                                                      index]
+                                                                  .description ??
+                                                              "",
+                                                          image: provider
+                                                                  .dataModel
+                                                                  ?.articles?[
+                                                                      index]
+                                                                  .urlToImage ??
+                                                              "",
+                                                          source: provider
+                                                                  .dataModel
+                                                                  ?.articles?[index]
+                                                                  .source
+                                                                  ?.name ??
+                                                              "",
+                                                          title: provider.dataModel?.articles?[index].title ?? ""));
                                                     },
-                                                    child: Icon(
-                                                      Icons.bookmark_outline,
-                                                      size: 20,
-                                                      color: primary,
-                                                    ),
+                                                    child:
+                                                        Provider.of<SavedNewsController>(
+                                                                    context)
+                                                                .isSaved
+                                                            ? Icon(
+                                                                Icons.bookmark,
+                                                                size: 20,
+                                                                color: primary,
+                                                              )
+                                                            : Icon(
+                                                                Icons
+                                                                    .bookmark_outline,
+                                                                color: primary,
+                                                                size: 20,
+                                                              ),
                                                   ),
                                                 ],
                                               )
